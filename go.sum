@@ -2,6 +2,8 @@ github.com/Compogo/compogo v0.0.1 h1:Y2tD/19m9bOiF7K14ZxPxBrWaaxY4lkcRnDUjXB/yCE
 github.com/Compogo/compogo v0.0.1/go.mod h1:LbPhr7u4g11Lv8c9tifDnD7aJf3nNRhdsz1LlMdMGcY=
 github.com/Compogo/compogo v0.0.2 h1:5Kda4JmDr5fD2jHwapJKUUnK7vcT63yU4t1WSDSuXrc=
 github.com/Compogo/compogo v0.0.2/go.mod h1:LbPhr7u4g11Lv8c9tifDnD7aJf3nNRhdsz1LlMdMGcY=
+github.com/Compogo/compogo v0.0.3 h1:I5QYh3UJXUCkFQ+ygL8jfA+uEH8ZQzOlq9+vwffIdfQ=
+github.com/Compogo/compogo v0.0.3/go.mod h1:LbPhr7u4g11Lv8c9tifDnD7aJf3nNRhdsz1LlMdMGcY=
 github.com/sirupsen/logrus v1.9.4 h1:TsZE7l11zFCLZnZ+teH4Umoq5BhEIfIzfRDZ1Uzql2w=
 github.com/sirupsen/logrus v1.9.4/go.mod h1:ftWc9WdOfJ0a92nsE2jF5u5ZwH8Bv2zdeOC42RjbV2g=
 golang.org/x/sys v0.13.0 h1:Af8nKPmuFypiUBjVoU9V20FiaFXOcuZI21p0ycVYYGE=

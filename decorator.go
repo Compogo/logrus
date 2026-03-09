@@ -54,7 +54,9 @@ func NewDecorator() *Decorator {
 // The message is prefixed with the application name in brackets.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Panicf(s string, i ...interface{}) {
-	s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	if logger.appName != "" {
+		s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Panicf(s, i...)
@@ -68,7 +70,9 @@ func (logger *Decorator) Panicf(s string, i ...interface{}) {
 // The application name is prepended to the arguments.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Panic(i ...interface{}) {
-	i = append([]interface{}{fmt.Sprintf("[%s]", logger.appName)}, i...)
+	if logger.appName != "" {
+		i = append([]interface{}{fmt.Sprintf("[%s] ", logger.appName)}, i...)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Panic(i...)
@@ -82,7 +86,9 @@ func (logger *Decorator) Panic(i ...interface{}) {
 // The message is prefixed with the application name in brackets.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Errorf(s string, i ...interface{}) {
-	s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	if logger.appName != "" {
+		s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Errorf(s, i...)
@@ -96,7 +102,9 @@ func (logger *Decorator) Errorf(s string, i ...interface{}) {
 // The application name is prepended to the arguments.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Error(i ...interface{}) {
-	i = append([]interface{}{fmt.Sprintf("[%s]", logger.appName)}, i...)
+	if logger.appName != "" {
+		i = append([]interface{}{fmt.Sprintf("[%s] ", logger.appName)}, i...)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Error(i...)
@@ -110,7 +118,9 @@ func (logger *Decorator) Error(i ...interface{}) {
 // The message is prefixed with the application name in brackets.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Warnf(s string, i ...interface{}) {
-	s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	if logger.appName != "" {
+		s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Warnf(s, i...)
@@ -124,7 +134,9 @@ func (logger *Decorator) Warnf(s string, i ...interface{}) {
 // The application name is prepended to the arguments.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Warn(i ...interface{}) {
-	i = append([]interface{}{fmt.Sprintf("[%s]", logger.appName)}, i...)
+	if logger.appName != "" {
+		i = append([]interface{}{fmt.Sprintf("[%s] ", logger.appName)}, i...)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Warn(i...)
@@ -138,7 +150,9 @@ func (logger *Decorator) Warn(i ...interface{}) {
 // The message is prefixed with the application name in brackets.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Infof(s string, i ...interface{}) {
-	s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	if logger.appName != "" {
+		s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Infof(s, i...)
@@ -152,7 +166,9 @@ func (logger *Decorator) Infof(s string, i ...interface{}) {
 // The application name is prepended to the arguments.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Info(i ...interface{}) {
-	i = append([]interface{}{fmt.Sprintf("[%s]", logger.appName)}, i...)
+	if logger.appName != "" {
+		i = append([]interface{}{fmt.Sprintf("[%s] ", logger.appName)}, i...)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Info(i...)
@@ -166,7 +182,9 @@ func (logger *Decorator) Info(i ...interface{}) {
 // The message is prefixed with the application name in brackets.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Debugf(s string, i ...interface{}) {
-	s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	if logger.appName != "" {
+		s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Debugf(s, i...)
@@ -180,7 +198,9 @@ func (logger *Decorator) Debugf(s string, i ...interface{}) {
 // The application name is prepended to the arguments.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Debug(i ...interface{}) {
-	i = append([]interface{}{fmt.Sprintf("[%s]", logger.appName)}, i...)
+	if logger.appName != "" {
+		i = append([]interface{}{fmt.Sprintf("[%s] ", logger.appName)}, i...)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Debug(i...)
@@ -194,7 +214,9 @@ func (logger *Decorator) Debug(i ...interface{}) {
 // The message is prefixed with the application name in brackets.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Printf(s string, i ...interface{}) {
-	s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	if logger.appName != "" {
+		s = fmt.Sprintf("[%s] %s", logger.appName, s)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Printf(s, i...)
@@ -208,7 +230,9 @@ func (logger *Decorator) Printf(s string, i ...interface{}) {
 // The application name is prepended to the arguments.
 // If this is a child logger, the call is delegated to the parent.
 func (logger *Decorator) Print(i ...interface{}) {
-	i = append([]interface{}{fmt.Sprintf("[%s]", logger.appName)}, i...)
+	if logger.appName != "" {
+		i = append([]interface{}{fmt.Sprintf("[%s] ", logger.appName)}, i...)
+	}
 
 	if logger.parent != nil {
 		logger.parent.Print(i...)

@@ -45,7 +45,7 @@ func WithLogrus() compogo.Option {
 
 	Component.Init = component.StepFunc(func(container container.Container) error {
 		return container.Provides(
-			NewConfig(),
+			NewConfig,
 			func() *Decorator { return decorator },
 			func(decorator *Decorator) logger.Logger { return decorator },
 		)

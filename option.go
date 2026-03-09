@@ -9,6 +9,7 @@ import (
 )
 
 var Component = &component.Component{
+	Name: "logger.Logrus",
 	BindFlags: component.BindFlags(func(flagSet flag.FlagSet, container container.Container) error {
 		return container.Invoke(func(config *Config) {
 			flagSet.StringVar(&config.LevelName, LevelNameFieldName, LevelNameDefault, "level on logger")

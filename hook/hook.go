@@ -27,7 +27,7 @@ func NewMetricHook(appConfig *compogo.Config, config *Config) *MetricHook {
 	}
 
 	counterVec := promauto.NewCounterVec(prometheus.CounterOpts{
-		Name: "go_log_level_count",
+		Name: "compogo_log_level_count",
 		Help: "log counter of a certain level",
 		ConstLabels: map[string]string{
 			AppNameFieldName: appConfig.Name,

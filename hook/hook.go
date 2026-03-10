@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	AppNameFieldName = "app"
-	LevelFieldName   = "level"
+	LevelFieldName = "level"
 )
 
 type MetricHook struct {
@@ -27,10 +26,10 @@ func NewMetricHook(appConfig *compogo.Config, config *Config) *MetricHook {
 	}
 
 	counterVec := promauto.NewCounterVec(prometheus.CounterOpts{
-		Name: "compogo_log_level_count",
+		Name: compogo.MetricNamePrefix + "log_level_count",
 		Help: "log counter of a certain level",
 		ConstLabels: map[string]string{
-			AppNameFieldName: appConfig.Name,
+			compogo.MetricAppNameFieldName: appConfig.Name,
 		},
 	}, []string{LevelFieldName})
 

@@ -8,9 +8,6 @@ import (
 )
 
 var LogrusMetricComponent = &component.Component{
-	Dependencies: component.Components{
-		logrus.Component,
-	},
 	Init: component.StepFunc(func(container container.Container) error {
 		return container.Provides(
 			NewConfig,
@@ -22,10 +19,10 @@ var LogrusMetricComponent = &component.Component{
 			flagSet.StringArrayVar(&config.LevelNames, LevelNamesFieldName, LevelNamesDefault, "")
 		})
 	}),
-	PreRun: component.StepFunc(func(container container.Container) error {
+	Configuration: component.StepFunc(func(container container.Container) error {
 		return container.Invoke(Configuration)
 	}),
-	Run: component.StepFunc(func(container container.Container) error {
+	PreExecute: component.StepFunc(func(container container.Container) error {
 		return container.Invoke(func(decorator logrus.Decorator, hook *MetricHook) {
 			decorator.AddHook(hook)
 		})

@@ -32,6 +32,12 @@ func WithLogrus() compogo.Option {
 			return container.Provides(
 				NewConfig,
 				func() *Decorator { return decorator },
+				func(decorator *Decorator) logger.Panicer { return decorator },
+				func(decorator *Decorator) logger.Errorer { return decorator },
+				func(decorator *Decorator) logger.Warner { return decorator },
+				func(decorator *Decorator) logger.Informer { return decorator },
+				func(decorator *Decorator) logger.Debuger { return decorator },
+				func(decorator *Decorator) logger.Printer { return decorator },
 				func(decorator *Decorator) logger.Logger { return decorator },
 			)
 		}),

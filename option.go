@@ -1,6 +1,8 @@
 package logrus
 
 import (
+	"context"
+
 	"github.com/Compogo/compogo"
 	"github.com/Compogo/compogo/component"
 	"github.com/Compogo/compogo/container"
@@ -41,10 +43,64 @@ func WithLogrus() compogo.Option {
 		Configuration: component.StepFunc(func(container container.Container) error {
 			return container.Invoke(Configuration)
 		}),
-		Execute: component.StepFunc(func(container container.Container) error {
+		PreExecute: component.StepFunc(func(container container.Container) error {
 			return container.Invoke(func(decorator *Decorator, config *Config, appCfg *compogo.Config) error {
 				decorator.appName = appCfg.Name
-				return decorator.SetLevel(config.Level)
+				if err := decorator.SetLevel(config.Level); err != nil {
+					return err
+				}
+
+				decorator.Info("[logrus] execute 'PreExecute' step.")
+
+				return nil
+			})
+		}),
+		Execute: component.StepFunc(func(container container.Container) error {
+			return container.Invoke(func(logger logger.Logger) error {
+				logger.Info("[logrus] execute 'Execute' step.")
+				return nil
+			})
+		}),
+		PostExecute: component.StepFunc(func(container container.Container) error {
+			return container.Invoke(func(logger logger.Logger) error {
+				logger.Info("[logrus] execute 'PostExecute' step.")
+				return nil
+			})
+		}),
+		PreWait: component.StepFunc(func(container container.Container) error {
+			return container.Invoke(func(logger logger.Logger) error {
+				logger.Info("[logrus] execute 'PreWait' step.")
+				return nil
+			})
+		}),
+		Wait: component.WaitFunc(func(_ context.Context, container container.Container) error {
+			return container.Invoke(func(logger logger.Logger) error {
+				logger.Info("[logrus] execute 'Wait' step.")
+				return nil
+			})
+		}),
+		PostWait: component.StepFunc(func(container container.Container) error {
+			return container.Invoke(func(logger logger.Logger) error {
+				logger.Info("[logrus] execute 'PostWait' step.")
+				return nil
+			})
+		}),
+		PreStop: component.StepFunc(func(container container.Container) error {
+			return container.Invoke(func(logger logger.Logger) error {
+				logger.Info("[logrus] execute 'PreStop' step.")
+				return nil
+			})
+		}),
+		Stop: component.StepFunc(func(container container.Container) error {
+			return container.Invoke(func(logger logger.Logger) error {
+				logger.Info("[logrus] execute 'Stop' step.")
+				return nil
+			})
+		}),
+		PostStop: component.StepFunc(func(container container.Container) error {
+			return container.Invoke(func(logger logger.Logger) error {
+				logger.Info("[logrus] execute 'PostStop' step.")
+				return nil
 			})
 		}),
 	})

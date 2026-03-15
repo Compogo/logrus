@@ -5,8 +5,8 @@ import (
 
 	"github.com/Compogo/compogo/configurator"
 	"github.com/Compogo/compogo/logger"
-	"github.com/Compogo/compogo/types"
 	logrus2 "github.com/Compogo/logrus"
+	"github.com/Compogo/types/set"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +18,7 @@ var LevelNamesDefault = []string{logger.Panic.String(), logger.Error.String(), l
 
 type Config struct {
 	LevelNames []string
-	Levels     types.Set[logrus.Level]
+	Levels     set.Set[logrus.Level]
 }
 
 func NewConfig() *Config {

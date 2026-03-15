@@ -5,7 +5,7 @@ import (
 
 	"github.com/Compogo/compogo/configurator"
 	"github.com/Compogo/compogo/logger"
-	"github.com/Compogo/compogo/types"
+	"github.com/Compogo/types/linker"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,12 +22,12 @@ var (
 
 	// LoggerLevelToLogrusLevel maps Compogo's logger.Level to logrus.Level.
 	// This ensures type-safe conversion between the two level systems.
-	LoggerLevelToLogrusLevel = types.NewLinker[logger.Level, logrus.Level](
-		types.NewLink(logger.Panic, logrus.PanicLevel),
-		types.NewLink(logger.Error, logrus.ErrorLevel),
-		types.NewLink(logger.Warn, logrus.WarnLevel),
-		types.NewLink(logger.Info, logrus.InfoLevel),
-		types.NewLink(logger.Debug, logrus.DebugLevel),
+	LoggerLevelToLogrusLevel = linker.NewLinker[logger.Level, logrus.Level](
+		linker.NewLink(logger.Panic, logrus.PanicLevel),
+		linker.NewLink(logger.Error, logrus.ErrorLevel),
+		linker.NewLink(logger.Warn, logrus.WarnLevel),
+		linker.NewLink(logger.Info, logrus.InfoLevel),
+		linker.NewLink(logger.Debug, logrus.DebugLevel),
 	)
 )
 

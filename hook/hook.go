@@ -4,7 +4,8 @@ import (
 	"errors"
 
 	"github.com/Compogo/compogo"
-	"github.com/Compogo/compogo/types"
+	"github.com/Compogo/types/linker"
+	"github.com/Compogo/types/mapper"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
@@ -16,13 +17,13 @@ const (
 
 type MetricHook struct {
 	config  *Config
-	metrics *types.Linker[logrus.Level, prometheus.Counter]
+	metrics *linker.Linker[logrus.Level, prometheus.Counter]
 }
 
 func NewMetricHook(appConfig *compogo.Config, config *Config) *MetricHook {
 	hook := &MetricHook{
 		config:  config,
-		metrics: types.NewLinker[logrus.Level, prometheus.Counter](),
+		metrics: linker.NewLinker[logrus.Level, prometheus.Counter](),
 	}
 
 	counterVec := promauto.NewCounterVec(prometheus.CounterOpts{
@@ -46,7 +47,7 @@ func (metric *MetricHook) Levels() []logrus.Level {
 
 func (metric *MetricHook) Fire(entry *logrus.Entry) error {
 	counter, err := metric.metrics.Get(entry.Level)
-	if err != nil && !errors.Is(err, types.DoesNotExistError) {
+	if err != nil && !errors.Is(err, mapper.DoesNotExistError) {
 		return err
 	}
 

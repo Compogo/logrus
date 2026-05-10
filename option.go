@@ -6,8 +6,8 @@ import (
 	"github.com/Compogo/compogo"
 	"github.com/Compogo/compogo/component"
 	"github.com/Compogo/compogo/container"
-	"github.com/Compogo/compogo/flag"
 	"github.com/Compogo/compogo/logger"
+	"github.com/Compogo/logrus/infrastructure/config"
 )
 
 // WithLogrus returns a Compogo option that integrates logrus as the
@@ -24,88 +24,81 @@ import (
 //	    // other options...
 //	)
 func WithLogrus() compogo.Option {
-	decorator := NewDecorator()
+	l := NewLogger()
 
-	return compogo.WithLogger(decorator, &component.Component{
+	return compogo.WithLogger(l, &component.Component{
 		Name: "logger.Logrus",
+		Dependencies: component.Components{
+			config.Component,
+		},
 		Init: component.StepFunc(func(container container.Container) error {
 			return container.Provides(
-				NewConfig,
-				func() *Decorator { return decorator },
-				func(decorator *Decorator) logger.Panicer { return decorator },
-				func(decorator *Decorator) logger.Errorer { return decorator },
-				func(decorator *Decorator) logger.Warner { return decorator },
-				func(decorator *Decorator) logger.Informer { return decorator },
-				func(decorator *Decorator) logger.Debuger { return decorator },
-				func(decorator *Decorator) logger.Printer { return decorator },
-				func(decorator *Decorator) logger.Logger { return decorator },
+				func() *Logger { return l },
+				func(logger *Logger) logger.Panicer { return logger },
+				func(logger *Logger) logger.Errorer { return logger },
+				func(logger *Logger) logger.Warner { return logger },
+				func(logger *Logger) logger.Informer { return logger },
+				func(logger *Logger) logger.Debuger { return logger },
+				func(logger *Logger) logger.Printer { return logger },
+				func(logger *Logger) logger.Logger { return logger },
 			)
 		}),
-		BindFlags: component.BindFlags(func(flagSet flag.FlagSet, container container.Container) error {
-			return container.Invoke(func(config *Config) {
-				flagSet.StringVar(&config.LevelName, LevelNameFieldName, LevelNameDefault, "level on logger")
+		Configuration: component.StepFunc(func(container container.Container) error {
+			return container.Invoke(func(logger *Logger, config *config.Config) error {
+				return logger.SetLevel(config.Level)
 			})
 		}),
-		Configuration: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(Configuration)
-		}),
 		PreExecute: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(func(decorator *Decorator, config *Config, appCfg *compogo.Config) error {
-				decorator.appName = appCfg.Name
-				if err := decorator.SetLevel(config.Level); err != nil {
-					return err
-				}
-
-				decorator.Info("[logrus] execute 'PreExecute' step.")
-
+			return container.Invoke(func(logger *Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'PreExecute' step.")
 				return nil
 			})
 		}),
 		Execute: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(func(logger logger.Logger) error {
-				logger.Info("[logrus] execute 'Execute' step.")
+			return container.Invoke(func(logger logger.Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'Execute' step.")
 				return nil
 			})
 		}),
 		PostExecute: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(func(logger logger.Logger) error {
-				logger.Info("[logrus] execute 'PostExecute' step.")
+			return container.Invoke(func(logger logger.Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'PostExecute' step.")
 				return nil
 			})
 		}),
 		PreWait: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(func(logger logger.Logger) error {
-				logger.Info("[logrus] execute 'PreWait' step.")
+			return container.Invoke(func(logger logger.Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'PreWait' step.")
 				return nil
 			})
 		}),
 		Wait: component.WaitFunc(func(_ context.Context, container container.Container) error {
-			return container.Invoke(func(logger logger.Logger) error {
-				logger.Info("[logrus] execute 'Wait' step.")
+			return container.Invoke(func(logger logger.Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'Wait' step.")
 				return nil
 			})
 		}),
 		PostWait: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(func(logger logger.Logger) error {
-				logger.Info("[logrus] execute 'PostWait' step.")
+			return container.Invoke(func(logger logger.Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'PostWait' step.")
 				return nil
 			})
 		}),
 		PreStop: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(func(logger logger.Logger) error {
-				logger.Info("[logrus] execute 'PreStop' step.")
+			return container.Invoke(func(logger logger.Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'PreStop' step.")
 				return nil
 			})
 		}),
 		Stop: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(func(logger logger.Logger) error {
-				logger.Info("[logrus] execute 'Stop' step.")
+			return container.Invoke(func(logger logger.Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'Stop' step.")
 				return nil
 			})
 		}),
 		PostStop: component.StepFunc(func(container container.Container) error {
-			return container.Invoke(func(logger logger.Logger) error {
-				logger.Info("[logrus] execute 'PostStop' step.")
+			return container.Invoke(func(logger logger.Logger, compogoCfg *compogo.Config) error {
+				logger.GetLogger("compogo").GetLogger(compogoCfg.Name).Info("execute 'PostStop' step.")
 				return nil
 			})
 		}),

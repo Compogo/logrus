@@ -1,4 +1,4 @@
-package hook
+package metrics
 
 import (
 	"github.com/Compogo/compogo/component"
@@ -8,6 +8,7 @@ import (
 )
 
 var LogrusMetricComponent = &component.Component{
+	Name: "logger.Logrus.metrics",
 	Init: component.StepFunc(func(container container.Container) error {
 		return container.Provides(
 			NewConfig,
@@ -16,14 +17,14 @@ var LogrusMetricComponent = &component.Component{
 	}),
 	BindFlags: component.BindFlags(func(flagSet flag.FlagSet, container container.Container) error {
 		return container.Invoke(func(config *Config) {
-			flagSet.StringArrayVar(&config.LevelNames, LevelNamesFieldName, LevelNamesDefault, "")
+			flagSet.StringArrayVar(&config.levelNames, LevelNamesFieldName, LevelNamesDefault, "")
 		})
 	}),
 	Configuration: component.StepFunc(func(container container.Container) error {
 		return container.Invoke(Configuration)
 	}),
 	PreExecute: component.StepFunc(func(container container.Container) error {
-		return container.Invoke(func(decorator logrus.Decorator, hook *MetricHook) {
+		return container.Invoke(func(decorator logrus.Logger, hook *MetricHook) {
 			decorator.AddHook(hook)
 		})
 	}),

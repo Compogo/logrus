@@ -1,4 +1,4 @@
-package hook
+package metrics
 
 import (
 	"errors"

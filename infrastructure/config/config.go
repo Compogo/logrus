@@ -1,12 +1,10 @@
-package logrus
+package config
 
 import (
 	"strings"
 
 	"github.com/Compogo/compogo/configurator"
 	"github.com/Compogo/compogo/logger"
-	"github.com/Compogo/types/linker"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -19,26 +17,16 @@ var (
 	// LevelNameDefault defines the default log level as a string.
 	// It corresponds to logger.Error (lowercase "error").
 	LevelNameDefault = strings.ToLower(logger.Error.String())
-
-	// LoggerLevelToLogrusLevel maps Compogo's logger.Level to logrus.Level.
-	// This ensures type-safe conversion between the two level systems.
-	LoggerLevelToLogrusLevel = linker.NewLinker[logger.Level, logrus.Level](
-		linker.NewLink(logger.Panic, logrus.PanicLevel),
-		linker.NewLink(logger.Error, logrus.ErrorLevel),
-		linker.NewLink(logger.Warn, logrus.WarnLevel),
-		linker.NewLink(logger.Info, logrus.InfoLevel),
-		linker.NewLink(logger.Debug, logrus.DebugLevel),
-	)
 )
 
 // Config holds the logger configuration that can be set via command-line flags
 // or configuration files. It includes the log level as both string and parsed enum.
 type Config struct {
-	// LevelName is the string representation of the log level (e.g., "info", "debug").
+	// levelName is the string representation of the log level (e.g., "info", "debug").
 	// It is populated from the command-line flag.
-	LevelName string
+	levelName string
 
-	// Level is the parsed logger.Level enum value, converted from LevelName.
+	// Level is the parsed logger.Level enum value, converted from levelName.
 	Level logger.Level
 }
 
@@ -55,13 +43,13 @@ func NewConfig() *Config {
 //
 // The function is designed to be used with container.Invoke in the PreRun phase.
 func Configuration(config *Config, configurator configurator.Configurator) (*Config, error) {
-	if config.LevelName == "" || config.LevelName == LevelNameDefault {
+	if config.levelName == "" || config.levelName == LevelNameDefault {
 		configurator.SetDefault(LevelNameFieldName, LevelNameDefault)
-		config.LevelName = configurator.GetString(LevelNameFieldName)
+		config.levelName = configurator.GetString(LevelNameFieldName)
 	}
 
 	var err error
-	config.Level, err = logger.Levels.Get(config.LevelName)
+	config.Level, err = logger.AllLevels.Get(config.levelName)
 	if err != nil {
 		return nil, err
 	}

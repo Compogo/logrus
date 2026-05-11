@@ -3,8 +3,8 @@ module github.com/Compogo/logrus
 go 1.26.1
 
 require (
-	github.com/Compogo/compogo v0.0.32
-	github.com/Compogo/types v0.0.13
+	github.com/Compogo/compogo v0.0.33
+	github.com/Compogo/types v0.0.14
 	github.com/sirupsen/logrus v1.9.4
 )
 

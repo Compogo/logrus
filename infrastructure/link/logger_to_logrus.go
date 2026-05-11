@@ -8,10 +8,10 @@ import (
 
 var (
 	LoggerLevelToLogrusLevel = linker.NewLinker[logger.Level, logrus.Level](
-		linker.NewLink(logger.Panic, logrus.PanicLevel),
-		linker.NewLink(logger.Error, logrus.ErrorLevel),
-		linker.NewLink(logger.Warn, logrus.WarnLevel),
-		linker.NewLink(logger.Info, logrus.InfoLevel),
-		linker.NewLink(logger.Debug, logrus.DebugLevel),
+		linker.Link(logger.Panic, logrus.PanicLevel),
+		linker.Link(logger.Error, logrus.ErrorLevel),
+		linker.Link(logger.Warn, logrus.WarnLevel),
+		linker.Link(logger.Info, logrus.InfoLevel),
+		linker.Link(logger.Debug, logrus.DebugLevel),
 	)
 )

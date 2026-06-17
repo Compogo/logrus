@@ -1,17 +1,19 @@
 package link
 
 import (
-	"github.com/Compogo/compogo/logger"
+	"github.com/Compogo/compogo"
 	"github.com/Compogo/types/linker"
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	LoggerLevelToLogrusLevel = linker.NewLinker[logger.Level, logrus.Level](
-		linker.Link(logger.Panic, logrus.PanicLevel),
-		linker.Link(logger.Error, logrus.ErrorLevel),
-		linker.Link(logger.Warn, logrus.WarnLevel),
-		linker.Link(logger.Info, logrus.InfoLevel),
-		linker.Link(logger.Debug, logrus.DebugLevel),
+	// LoggerLevelToLogrusLevel связывает уровни Compogo с уровнями Logrus.
+	// Используется для установки уровня логирования и фильтрации.
+	LoggerLevelToLogrusLevel = linker.NewLinker[compogo.Level, logrus.Level](
+		linker.Link(compogo.Panic, logrus.PanicLevel),
+		linker.Link(compogo.Error, logrus.ErrorLevel),
+		linker.Link(compogo.Warn, logrus.WarnLevel),
+		linker.Link(compogo.Info, logrus.InfoLevel),
+		linker.Link(compogo.Debug, logrus.DebugLevel),
 	)
 )

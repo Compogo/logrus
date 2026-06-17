@@ -3,37 +3,41 @@ package logrus
 import (
 	"os"
 
-	"github.com/Compogo/compogo/logger"
+	"github.com/Compogo/compogo"
 	"github.com/Compogo/logrus/infrastructure/link"
 	"github.com/Compogo/types/linker"
 	"github.com/sirupsen/logrus"
 )
 
-// Logger wraps a logrus.Logger to implement the logger.Logger interface.
-// It adds application name prefixing to all log messages and supports
-// creating child loggers for sub-components.
+// Logger реализует интерфейс compogo.Logger на основе Logrus.
+// Поддерживает иерархическую структуру логгеров через GetLogger,
+// раздельные потоки вывода (stdout/stderr) и добавление хуков.
 //
-// The decorator maintains separate stdout and stderr loggers, allowing
-// different outputs for different log levels if needed.
+// Иерархия:
+//   - Корневой логгер создаётся через NewLogger()
+//   - Вложенные логгеры создаются через GetLogger()
+//   - Каждый вложенный логгер добавляет префикс [имя] к сообщениям
+//
+// Пример:
+//
+//	logger := NewLogger()
+//	httpLogger := logger.GetLogger("http")
+//	httpLogger.Info("Server started") // выведет: "[http] Server started"
 type Logger struct {
-	name string
-
-	// stdErr is the logrus logger used for error-level and above messages.
-	stdErr *logrus.Logger
-
-	// stdOut is the logrus logger used for info-level and below messages.
-	stdOut *logrus.Logger
-
-	// parent points to the parent logger when this is a child logger
-	// created via GetLogger. It enables log message delegation up the chain.
-	parent *Logger
-
+	name    string
+	stdErr  *logrus.Logger
+	stdOut  *logrus.Logger
+	parent  *Logger
 	childes *linker.Linker[string, *Logger]
 }
 
-// NewLogger creates a new Logger instance with default logrus loggers.
-// Both stdout and stderr loggers are initialized with default settings.
-// The actual log level will be set later via SetLevel.
+// NewLogger создаёт новый корневой логгер.
+// Настраивает вывод в stdout/stderr и устанавливает TextFormatter.
+//
+// Пример:
+//
+//	logger := NewLogger()
+//	logger.Info("Application started")
 func NewLogger() *Logger {
 	l := &Logger{
 		stdErr: logrus.New(),
@@ -51,9 +55,7 @@ func NewLogger() *Logger {
 	return l
 }
 
-// Panicf logs a formatted message at Panic level and then panics.
-// The message is prefixed with the application name in brackets.
-// If this is a child logger, the call is delegated to the parent.
+// Panicf логирует сообщение с уровнем Panic и вызывает panic.
 func (logger *Logger) Panicf(s string, i ...interface{}) {
 	if logger.name != "" {
 		s = "[%s]" + s
@@ -70,9 +72,7 @@ func (logger *Logger) Panicf(s string, i ...interface{}) {
 	logger.stdErr.Panicf(s, i...)
 }
 
-// Panic logs a message at Panic level and then panics.
-// The application name is prepended to the arguments.
-// If this is a child logger, the call is delegated to the parent.
+// Panic логирует сообщение с уровнем Panic и вызывает panic.
 func (logger *Logger) Panic(i ...interface{}) {
 	if logger.name != "" {
 		i = append(i, 0)
@@ -88,9 +88,7 @@ func (logger *Logger) Panic(i ...interface{}) {
 	logger.stdErr.Panic(i...)
 }
 
-// Errorf logs a formatted message at Error level.
-// The message is prefixed with the application name in brackets.
-// If this is a child logger, the call is delegated to the parent.
+// Errorf логирует форматированное сообщение с уровнем Error.
 func (logger *Logger) Errorf(s string, i ...interface{}) {
 	if logger.name != "" {
 		s = "[%s]" + s
@@ -107,9 +105,7 @@ func (logger *Logger) Errorf(s string, i ...interface{}) {
 	logger.stdErr.Errorf(s, i...)
 }
 
-// Error logs a message at Error level.
-// The application name is prepended to the arguments.
-// If this is a child logger, the call is delegated to the parent.
+// Error логирует сообщение с уровнем Error.
 func (logger *Logger) Error(i ...interface{}) {
 	if logger.name != "" {
 		i = append(i, 0)
@@ -125,9 +121,7 @@ func (logger *Logger) Error(i ...interface{}) {
 	logger.stdErr.Error(i...)
 }
 
-// Warnf logs a formatted message at Warn level.
-// The message is prefixed with the application name in brackets.
-// If this is a child logger, the call is delegated to the parent.
+// Warnf логирует форматированное сообщение с уровнем Warn.
 func (logger *Logger) Warnf(s string, i ...interface{}) {
 	if logger.name != "" {
 		s = "[%s]" + s
@@ -144,9 +138,7 @@ func (logger *Logger) Warnf(s string, i ...interface{}) {
 	logger.stdErr.Warnf(s, i...)
 }
 
-// Warn logs a message at Warn level.
-// The application name is prepended to the arguments.
-// If this is a child logger, the call is delegated to the parent.
+// Warn логирует сообщение с уровнем Warn.
 func (logger *Logger) Warn(i ...interface{}) {
 	if logger.name != "" {
 		i = append(i, 0)
@@ -162,9 +154,7 @@ func (logger *Logger) Warn(i ...interface{}) {
 	logger.stdErr.Warn(i...)
 }
 
-// Infof logs a formatted message at Info level.
-// The message is prefixed with the application name in brackets.
-// If this is a child logger, the call is delegated to the parent.
+// Infof логирует форматированное сообщение с уровнем Info.
 func (logger *Logger) Infof(s string, i ...interface{}) {
 	if logger.name != "" {
 		s = "[%s]" + s
@@ -181,9 +171,7 @@ func (logger *Logger) Infof(s string, i ...interface{}) {
 	logger.stdOut.Infof(s, i...)
 }
 
-// Info logs a message at Info level.
-// The application name is prepended to the arguments.
-// If this is a child logger, the call is delegated to the parent.
+// Info логирует сообщение с уровнем Info.
 func (logger *Logger) Info(i ...interface{}) {
 	if logger.name != "" {
 		i = append(i, 0)
@@ -199,9 +187,7 @@ func (logger *Logger) Info(i ...interface{}) {
 	logger.stdOut.Info(i...)
 }
 
-// Debugf logs a formatted message at Debug level.
-// The message is prefixed with the application name in brackets.
-// If this is a child logger, the call is delegated to the parent.
+// Debugf логирует форматированное сообщение с уровнем Debug.
 func (logger *Logger) Debugf(s string, i ...interface{}) {
 	if logger.name != "" {
 		s = "[%s]" + s
@@ -218,9 +204,7 @@ func (logger *Logger) Debugf(s string, i ...interface{}) {
 	logger.stdOut.Debugf(s, i...)
 }
 
-// Debug logs a message at Debug level.
-// The application name is prepended to the arguments.
-// If this is a child logger, the call is delegated to the parent.
+// Debug логирует сообщение с уровнем Debug.
 func (logger *Logger) Debug(i ...interface{}) {
 	if logger.name != "" {
 		i = append(i, 0)
@@ -236,9 +220,7 @@ func (logger *Logger) Debug(i ...interface{}) {
 	logger.stdOut.Debug(i...)
 }
 
-// Printf logs a formatted message at Info level (for compatibility).
-// The message is prefixed with the application name in brackets.
-// If this is a child logger, the call is delegated to the parent.
+// Printf логирует форматированное сообщение без уровня (аналог fmt.Printf).
 func (logger *Logger) Printf(s string, i ...interface{}) {
 	if logger.name != "" {
 		s = "[%s]" + s
@@ -255,9 +237,7 @@ func (logger *Logger) Printf(s string, i ...interface{}) {
 	logger.stdOut.Printf(s, i...)
 }
 
-// Print logs a message at Info level (for compatibility).
-// The application name is prepended to the arguments.
-// If this is a child logger, the call is delegated to the parent.
+// Print логирует сообщение без уровня (аналог fmt.Print).
 func (logger *Logger) Print(i ...interface{}) {
 	if logger.name != "" {
 		i = append(i, 0)
@@ -273,23 +253,24 @@ func (logger *Logger) Print(i ...interface{}) {
 	logger.stdOut.Print(i...)
 }
 
-// GetStdErr returns the underlying logrus.Logger used for error output.
-// This can be used for advanced configuration or adding hooks.
+// GetStdErr возвращает внутренний логгер для stderr.
+// Позволяет напрямую работать с Logrus-логгером.
 func (logger *Logger) GetStdErr() *logrus.Logger {
 	return logger.stdErr
 }
 
-// GetStdOut returns the underlying logrus.Logger used for standard output.
-// This can be used for advanced configuration or adding hooks.
+// GetStdOut возвращает внутренний логгер для stdout.
+// Позволяет напрямую работать с Logrus-логгером.
 func (logger *Logger) GetStdOut() *logrus.Logger {
 	return logger.stdOut
 }
 
-// SetLevel changes the logging level for both stdout and stderr loggers.
-// The level is converted from Compogo's logger.Level to logrus.Level
-// using the LoggerLevelToLogrusLevel mapper.
-// Returns an error if the level conversion fails.
-func (logger *Logger) SetLevel(level logger.Level) error {
+// SetLevel устанавливает уровень логирования для stdout и stderr.
+//
+// Пример:
+//
+//	logger.SetLevel(compogo.Debug)
+func (logger *Logger) SetLevel(level compogo.Level) error {
 	logrusLevel, err := link.LoggerLevelToLogrusLevel.Get(level)
 	if err != nil {
 		return err
@@ -301,22 +282,28 @@ func (logger *Logger) SetLevel(level logger.Level) error {
 	return nil
 }
 
-// AddHook adds a logrus hook to both stdout and stderr loggers.
-// This enables integration with external logging systems like Sentry,
-// file logging, or custom formatters.
+// AddHook добавляет хук Logrus к обоим логгерам (stdout и stderr).
+// Используется для добавления метрик, сентинел и других расширений.
+//
+// Пример:
+//
+//	logger.AddHook(&MetricHook{})
 func (logger *Logger) AddHook(hook logrus.Hook) {
 	logger.stdOut.AddHook(hook)
 	logger.stdErr.AddHook(hook)
 }
 
-// GetLogger creates a child logger with the given name.
-// The child logger will prefix all messages with its own name
-// in addition to the parent's name, creating a chain like:
-// [app] [child] message
+// GetLogger возвращает дочерний логгер с указанным именем.
+// Дочерние логгеры кэшируются и переиспользуются.
+// Сообщения от дочерних логгеров получают префикс [имя].
 //
-// This is useful for sub-components that need their own log identity
-// while still being part of the main application.
-func (logger *Logger) GetLogger(name string) logger.Logger {
+// Реализует интерфейс compogo.Logger.
+//
+// Пример:
+//
+//	httpLogger := logger.GetLogger("http")
+//	httpLogger.Info("Server started") // "[http] Server started"
+func (logger *Logger) GetLogger(name string) compogo.Logger {
 	if logger.childes == nil {
 		logger.childes = linker.NewLinker[string, *Logger]()
 	}

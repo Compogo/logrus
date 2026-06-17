@@ -1,30 +1,31 @@
 package metrics
 
 import (
-	"github.com/Compogo/compogo/component"
-	"github.com/Compogo/compogo/container"
+	"github.com/Compogo/compogo"
 	"github.com/Compogo/compogo/flag"
 	"github.com/Compogo/logrus"
 )
 
-var LogrusMetricComponent = &component.Component{
+// LogrusMetricComponent — компонент метрик для Logrus.
+// Добавляет флаги для настройки метрик и устанавливает хук в логгер.
+var LogrusMetricComponent = compogo.Component{
 	Name: "logger.Logrus.metrics",
-	Init: component.StepFunc(func(container container.Container) error {
+	Init: compogo.StepFunc(func(container compogo.Container) error {
 		return container.Provides(
 			NewConfig,
 			NewMetricHook,
 		)
 	}),
-	BindFlags: component.BindFlags(func(flagSet flag.FlagSet, container container.Container) error {
+	BindFlags: compogo.BindFlags(func(flagSet flag.FlagSet, container compogo.Container) error {
 		return container.Invoke(func(config *Config) {
 			flagSet.StringArrayVar(&config.levelNames, LevelNamesFieldName, LevelNamesDefault, "")
 		})
 	}),
-	Configuration: component.StepFunc(func(container container.Container) error {
+	Configuration: compogo.StepFunc(func(container compogo.Container) error {
 		return container.Invoke(Configuration)
 	}),
-	PreExecute: component.StepFunc(func(container container.Container) error {
-		return container.Invoke(func(decorator logrus.Logger, hook *MetricHook) {
+	PreExecute: compogo.StepFunc(func(container compogo.Container) error {
+		return container.Invoke(func(decorator *logrus.Logger, hook *MetricHook) {
 			decorator.AddHook(hook)
 		})
 	}),

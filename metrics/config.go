@@ -3,36 +3,39 @@ package metrics
 import (
 	"reflect"
 
-	"github.com/Compogo/compogo/configurator"
-	"github.com/Compogo/compogo/logger"
+	"github.com/Compogo/compogo"
 	"github.com/Compogo/logrus/infrastructure/link"
 	"github.com/Compogo/types/set"
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	LevelNamesFieldName = "logger.metric.levels"
-)
+// LevelNamesFieldName — имя поля в конфигурации для уровней метрик.
+const LevelNamesFieldName = "logger.metric.levels"
 
-var LevelNamesDefault = []string{logger.Panic.String(), logger.Error.String(), logger.Warn.String()}
+// LevelNamesDefault — уровни по умолчанию: Panic, Error, Warn.
+var LevelNamesDefault = []string{compogo.Panic.String(), compogo.Error.String(), compogo.Warn.String()}
 
+// Config содержит конфигурацию метрик логгера.
 type Config struct {
 	levelNames []string
 	Levels     set.Set[logrus.Level]
 }
 
+// NewConfig создаёт новую конфигурацию метрик.
 func NewConfig() *Config {
 	return &Config{}
 }
 
-func Configuration(config *Config, configurator configurator.Configurator) (*Config, error) {
+// Configuration загружает конфигурацию метрик из Configurator.
+// Парсит имена уровней в значения Logrus.
+func Configuration(config *Config, configurator compogo.Configurator) (*Config, error) {
 	if len(config.levelNames) == 0 || reflect.DeepEqual(config.levelNames, LevelNamesDefault) {
 		configurator.SetDefault(LevelNamesFieldName, LevelNamesDefault)
 		config.levelNames = configurator.GetStringSlice(LevelNamesFieldName)
 	}
 
 	for _, levelName := range config.levelNames {
-		level, err := logger.AllLevels.Get(levelName)
+		level, err := compogo.AllLevels.Get(levelName)
 		if err != nil {
 			return nil, err
 		}

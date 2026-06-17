@@ -3,13 +3,13 @@ module github.com/Compogo/logrus
 go 1.26.1
 
 require (
-	github.com/Compogo/compogo v0.0.33
-	github.com/Compogo/types v0.0.14
+	github.com/Compogo/compogo v1.0.0-rc1
+	github.com/Compogo/types v1.0.0
 	github.com/sirupsen/logrus v1.9.4
 )
 
 require (
-	github.com/Compogo/tools v0.0.1 // indirect
+	github.com/Compogo/tools v1.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
